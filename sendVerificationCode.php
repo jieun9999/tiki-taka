@@ -21,7 +21,6 @@ $result = $stmt->fetchAll();
 
 
 
-
 if (count($result) > 0) {
     echo json_encode(true); // 인증번호 전송 성공
 } else {

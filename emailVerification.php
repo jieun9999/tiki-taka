@@ -14,6 +14,7 @@ $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
+
 if (count($result) > 0) {
     echo json_encode(true); // 이미 가입된 이메일
 } else {
