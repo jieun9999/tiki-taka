@@ -30,7 +30,10 @@ if ($result) {
     $diff = strtotime($currentDatetime) - strtotime($authCodeDate);
 
    if ($diff <= 600) {
-        echo json_encode(["success" => true, "message" => "이메일 인증에 성공하였습니다"]);
+        //이메일에 연결된 userId를 가져오기
+        $userId = $result['user_id'];
+        
+        echo json_encode(["success" => true, "message" => "이메일 인증에 성공하였습니다", "userId" => $userId]);
     } else {
         echo json_encode(["success" => false, "message" => "인증번호가 만료되었습니다. 재발급 받으세요"]);
     }
