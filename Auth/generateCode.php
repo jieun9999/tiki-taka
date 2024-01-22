@@ -3,7 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require 'db_connect.php'; // 데이터베이스 연결
+require '../db_connect.php'; // 데이터베이스 연결
 
 // 인증번호 생성
 $userId = $_GET['userId'];
