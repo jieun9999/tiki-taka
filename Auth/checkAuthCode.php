@@ -12,7 +12,7 @@ $authCode = $_POST['authCode'];// 유저로부터 받은 인증번호
 // 현재 시간
 $currentDatetime = date('Y-m-d H:i:s');
 
-// 1. 인증번호 일치 여부 및 인증코드 날짜와 현재 시간 비교
+// 인증번호 일치 여부 및 인증코드 날짜와 현재 시간 비교
 //이메일과 인증번호가 모두 일치하고, 인증번호 생성 시간이 현재 시간으로부터 10분 이내인 경우에만 인증 성공으로 간주
 $sql = "SELECT * FROM userAuth WHERE email = :email
                                 AND auth_code = :authCode";
