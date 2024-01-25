@@ -21,7 +21,7 @@ $userId = $data['userId'];
 $imageBase64 = $data['image'];
 
 // 쿼리 작성
-$sql = "UPDATE userProfile SET profile_background_image = :image 
+$sql = "UPDATE userProfile SET home_background_image = :image 
                                         WHERE user_id = :userId";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':image', $imageBase64);
