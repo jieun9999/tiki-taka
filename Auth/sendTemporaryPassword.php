@@ -9,7 +9,7 @@ require '../db_connect.php'; // 데이터베이스 연결
 $email = $_POST['email'];// 클라이언트로부터 받은 이메일
 
 //1. 임시 비밀번호 생성
-function generateTemporaryPassword($length = 10) {
+function generateTemporaryPassword($length = 6) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
     $charactersLength = strlen($characters);
     $randomPassword = '';
