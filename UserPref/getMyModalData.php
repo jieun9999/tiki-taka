@@ -15,7 +15,6 @@ $stmt->execute();
 $userProfile = $stmt->fetch(PDO::FETCH_ASSOC);
 
 //null일 수도 있는 3가지 칼럼들 처리
-
 // home_background_image가 null이면 키를 제외
 if (is_null($userProfile['home_background_image'])) {
     unset($userProfile['home_background_image']);
@@ -31,7 +30,6 @@ if (is_null($userProfile['profile_message'])) {
     unset($userProfile['profile_message']);
 }
 //optString을 호출할 때 제공된 기본값이 반환
-
 
 
 // 클라이언트에게 JSON 형태로 응답
