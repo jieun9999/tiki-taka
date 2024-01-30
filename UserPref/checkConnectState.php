@@ -33,8 +33,8 @@ if ($partnerId) {
 
 // 클라이언트에게 JSON 형태로 응답
 header('Content-Type: application/json');
-error_log("userAuth: " . $userAuth);
-error_log("partnerAuth: " . $partnerAuth);
+error_log("userAuth: " . json_encode($userAuth));
+error_log("partnerAuth: " . json_encode($partnerAuth));
 
 if ($userAuth && $partnerAuth) {
     echo json_encode([
@@ -49,7 +49,7 @@ if ($userAuth && $partnerAuth) {
     // 프로필이 존재하지 않는 경우
     echo json_encode([
         'success' => false,
-        'message' => '프로필이 존재하지 않습니다'
+        'message' => '프로필이 존재하지 않습니다. 쉐어드에 userId가 존재하는지 확인하세요'
     ]);
 }
 
