@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 require '../db_connect.php'; // 데이터베이스 연결
 
 $userId = $_GET['userId'];
-error_log("data: " . $userId);
+error_log("userId: " . $userId);
 
 // 유저 프로필 가져오기
 $sql = "SELECT * FROM userAuth WHERE user_id = :userId";
@@ -33,6 +33,8 @@ if ($partnerId) {
 
 // 클라이언트에게 JSON 형태로 응답
 header('Content-Type: application/json');
+error_log("userAuth: " . $userAuth);
+error_log("partnerAuth: " . $partnerAuth);
 
 if ($userAuth && $partnerAuth) {
     echo json_encode([
@@ -43,7 +45,7 @@ if ($userAuth && $partnerAuth) {
     ]);
 
 
-} else {
+}else {
     // 프로필이 존재하지 않는 경우
     echo json_encode([
         'success' => false,
