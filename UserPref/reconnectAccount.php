@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 require '../db_connect.php'; // 데이터베이스 연결
 
 $userId = $_GET['userId'];
-error_log("data: " . $userId);
+//error_log("data: " . $userId);
 
 //password 필드가 현재 null이거나 비어 있는 상태라 하더라도, UPDATE 쿼리를 사용하여 그 필드를 새로운 값으로 업데이트하는 것은 완전히 가능
 // UPDATE 쿼리는 지정된 조건에 맞는 레코드를 찾아 해당 레코드의 하나 또는 여러 필드의 값을 변경

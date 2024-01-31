@@ -14,7 +14,7 @@ if ($json) {
 } else {
     error_log("JSON empty");
 }
-$data = json_decode($json, true); // true를 추가하여 배열로 변환
+//$data = json_decode($json, true); // true를 추가하여 배열로 변환
 
 //data에서 각 키를 뽑아내기
 $userId = $data['userId'];
@@ -36,6 +36,7 @@ if ($result) {
 
     echo json_encode(["success" => true, "message" => "저장 성공!"]);
     }
+    
     else{
     echo json_encode(["success" => true, "message" => "업데이트 될 행이 존재하지 않습니다"]);
     }

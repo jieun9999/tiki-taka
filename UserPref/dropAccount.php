@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 require '../db_connect.php'; // 데이터베이스 연결
 
 $userId = $_GET['userId'];
-error_log("data: " . $userId);
+//error_log("data: " . $userId);
 
 // mysql에서는 하나의 쿼리 내에서 여러개의 테이블을 업데이트하는 것을 지원X
 // 2개의 업데이트문을 하나의 트랜잭션으로 묶어 실행
