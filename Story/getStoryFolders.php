@@ -28,11 +28,11 @@ $storyFolders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if(empty($storyFolders)){
 
     // 결과가 없는 경우
-    echo json_encode(["success" => false, "message" =>"스토리 폴더가 검색되지 않습니다."]);
+    echo json_encode(["success" => false, "message" =>"스토리폴더가 없습니다."]);
 
 }else{
     // 결과가 있는 경우
-    echo json_encode(["success" => true,"storyFolders" => $storyFolders, "message" =>"스토리 폴더 성공" ]);
+    echo json_encode(["success" => true,"storyFolders" => $storyFolders, "message" =>"스토리폴더 가져오기 성공" ]);
 }
 
 

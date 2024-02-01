@@ -28,11 +28,11 @@ $storyCards = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if(empty($storyCards)){
 
     // 결과가 없는 경우
-    echo json_encode(["success" => false, "message" =>"스토리 카드가 검색되지 않습니다."]);
+    echo json_encode(["success" => false, "message" =>"스토리 카드가 없습니다"]);
 
 }else{
     // 결과가 있는 경우
-    echo json_encode(["success" => true,"storyCards" => $storyCards, "message" =>"스토리 카드 성공" ]);
+    echo json_encode(["success" => true,"storyCards" => $storyCards, "message" =>"스토리카드 가져오기 성공" ]);
 }
 
 ?>

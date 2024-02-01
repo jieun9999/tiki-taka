@@ -25,12 +25,12 @@ $storyFolder = $stmt->fetch(PDO::FETCH_ASSOC);
 if($storyFolder){
 
     // 결과가 있는 경우
-    echo json_encode(["success" => true, "storyFolder" => $storyFolder, "message" =>"스토리폴더 상세보기 성공" ]);
+    echo json_encode(["success" => true, "storyFolder" => $storyFolder, "message" =>"썸네일 가져오기 성공" ]);
 
 }else{
     
     // 결과가 없는 경우
-    echo json_encode(["success" => false, "message" =>"스토리 폴더가 검색되지 않습니다."]);
+    echo json_encode(["success" => false, "message" =>"썸네일을 찾을 수 없습니다."]);
 }
 
 
