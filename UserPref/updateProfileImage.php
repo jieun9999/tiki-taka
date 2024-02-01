@@ -8,7 +8,7 @@ require '../db_connect.php'; // 데이터베이스 연결
 // JSON 데이터 읽기
 // 클라이언트가 JSON 형태로 데이터를 전송하므로, php://input 스트림을 사용하여 이 데이터를 읽어야 합니다. 
 // $_POST 대신 아래와 같이 수정
-// $json = file_get_contents('php://input');
+$json = file_get_contents('php://input');
 // if ($json) {
 //     error_log("JSON data: " . $json);
 // } else {

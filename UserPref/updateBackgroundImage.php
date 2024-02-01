@@ -9,12 +9,12 @@ require '../db_connect.php'; // 데이터베이스 연결
 // 클라이언트가 JSON 형태로 데이터를 전송하므로, php://input 스트림을 사용하여 이 데이터를 읽어야 합니다. 
 // $_POST 대신 아래와 같이 수정
 $json = file_get_contents('php://input');
-if ($json) {
-    error_log("JSON data: " . $json);
-} else {
-    error_log("JSON empty");
-}
-//$data = json_decode($json, true); // true를 추가하여 배열로 변환
+// if ($json) {
+//     error_log("JSON data: " . $json);
+// } else {
+//     error_log("JSON empty");
+// }
+$data = json_decode($json, true); // true를 추가하여 배열로 변환
 
 //data에서 각 키를 뽑아내기
 $userId = $data['userId'];
