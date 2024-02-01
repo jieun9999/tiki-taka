@@ -25,7 +25,7 @@ $storyFolder = $stmt->fetch(PDO::FETCH_ASSOC);
 if($storyFolder){
 
     // 결과가 있는 경우
-    echo json_encode(["success" => true, "storyFolder" => $storyFolder, "message" =>"스토리 폴더 성공" ]);
+    echo json_encode(["success" => true, "storyFolder" => $storyFolder, "message" =>"스토리폴더 상세보기 성공" ]);
 
 }else{
     
