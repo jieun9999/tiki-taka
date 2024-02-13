@@ -18,13 +18,13 @@ $data = json_decode($json, true); // true를 추가하여 배열로 변환
 
 //data에서 각 키를 뽑아내기
 $userId = $data['userId'];
-$imageBase64 = $data['image'];
+$image = $data['image'];
 
 // 쿼리 작성
 $sql = "UPDATE userProfile SET profile_image = :image 
                                         WHERE user_id = :userId";
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':image', $imageBase64);
+$stmt->bindParam(':image', $image);
 $stmt->bindParam(':userId', $userId);
 $result = $stmt->execute();
 
