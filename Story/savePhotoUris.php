@@ -40,7 +40,7 @@ try{
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
     //성공응답
-    echo json_encode(["success" => true, "message" => "게시 성공!"]);
+    echo json_encode(["success" => true, "message" => "게시 성공!", "folderId" => $folderId]);
 
 }catch(PDOException $e) {
     // 오류 발생 시 트랜잭션 롤백
