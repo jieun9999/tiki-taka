@@ -12,6 +12,7 @@ $userId = $data->userId;
 $uris = $data->uris;
 $title = $data->title;
 $location = $data->location;
+$displayImage = $data -> displayImage;
 
 try{
     //트랜잭션 시작
@@ -23,21 +24,19 @@ try{
     $stmtFolder->execute([':userId' => $userId, ':dataType' => "image"]);
     $folderId = $conn->lastInsertId();
 
-    $lastImageUri = ""; // 마지막 이미지 URI를 저장할 변수
     // 2.스토리 카드 INSERT 쿼리 준비 및 실행
     $sqlCard = "INSERT INTO storyCard (folder_id, user_id, image, data_type) VALUES (:folderId, :userId, :image, :dataType)";
     $stmtCard = $conn->prepare($sqlCard);
     foreach($uris as $uri){
         $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':image' => $uri, ':dataType' => "image"]);
-        $lastImageUri = $uri; // 마지막으로 처리된 URI 업데이트
     }
 
     // 3.storyFolder 테이블의 display_image를 업데이트
-    if(!empty($lastImageUri)){
+    if(!empty($displayImage)){
         $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
                              WHERE folder_id = :folderId";
         $stmtUpdateFolder = $conn->prepare($sqlUpdateFolder);
-        $stmtUpdateFolder->execute([':displayImage' => $lastImageUri, ':folderId' => $folderId, ':title' => $title, ':location' => $location]);
+        $stmtUpdateFolder->execute([':displayImage' => $displayImage, ':folderId' => $folderId, ':title' => $title, ':location' => $location]);
     }
 
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
