@@ -10,6 +10,8 @@ $data = json_decode($json);
 
 $userId = $data->userId;
 $uris = $data->uris;
+$title = $data->title;
+$location = $data->location;
 
 try{
     //트랜잭션 시작
@@ -32,15 +34,16 @@ try{
 
     // 3.storyFolder 테이블의 display_image를 업데이트
     if(!empty($lastImageUri)){
-        $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage WHERE folder_id = :folderId";
+        $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
+                             WHERE folder_id = :folderId";
         $stmtUpdateFolder = $conn->prepare($sqlUpdateFolder);
-        $stmtUpdateFolder->execute([':displayImage' => $lastImageUri, ':folderId' => $folderId]);
+        $stmtUpdateFolder->execute([':displayImage' => $lastImageUri, ':folderId' => $folderId, ':title' => $title, ':location' => $location]);
     }
 
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
     //성공응답
-    echo json_encode(["success" => true, "message" => "게시 성공!", "folderId" => $folderId]);
+    echo json_encode(["success" => true, "message" => "게시 성공!"]);
 
 }catch(PDOException $e) {
     // 오류 발생 시 트랜잭션 롤백
