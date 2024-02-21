@@ -27,8 +27,11 @@ try{
     // 2.스토리 카드 INSERT 쿼리 준비 및 실행
     $sqlCard = "INSERT INTO storyCard (folder_id, user_id, image, data_type) VALUES (:folderId, :userId, :image, :dataType)";
     $stmtCard = $conn->prepare($sqlCard);
+    $cardIds = []; 
+    // 삽입된 각 스토리 카드의 ID를 저장할 배열
     foreach($uris as $uri){
         $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':image' => $uri, ':dataType' => "image"]);
+        $cardIds[] = $conn -> lastInsertId();
     }
 
     // 3.storyFolder 테이블의 display_image를 업데이트
@@ -39,6 +42,18 @@ try{
         $stmtUpdateFolder->execute([':displayImage' => $displayImage, ':folderId' => $folderId, ':title' => $title, ':location' => $location]);
     }
 
+    //4. 댓글 INSERT 쿼리 준비 및 실행
+    // 쿼리 준비는 반복문 바깥에서 한 번만 수행
+    $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
+    $stmtComment = $conn->prepare($sqlComment);
+
+    foreach($data -> comments as $index => $commentText){
+        // $commentItem 대신 $commentText를 사용합니다. $commentText는 직접 문자열입니다.
+        $cardId = $cardIds[$index];
+        //댓글과 스토리 카드의 순서 일치: $data->comments 배열에 있는 댓글의 순서와 $cardIds 배열에 저장된 스토리 카드 ID의 순서가 일치
+        $stmtComment ->execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
+    }
+    
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
     //성공응답
@@ -50,7 +65,5 @@ try{
     // 실패 응답
     echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: " . $e->getMessage()]);
 }
-
-
 
 ?>
