@@ -18,7 +18,6 @@ if($cardId !== null){
 
     $stmt = $conn->prepare($sql);
     $stmt ->execute([':cardId' => $cardId]);
-
     $commentsResult = [];
     //조회된 데이터들을 배열에 추가함
     while($row = $stmt -> fetch(PDO::FETCH_ASSOC)){
@@ -31,6 +30,7 @@ if($cardId !== null){
         //결과를 json 형식으로 클라이언트에 응답
         header('Content-Type: application/json');
         echo json_encode($commentsResult);
+
     }else{
         error_log("No comments found for cardId: " . $cardId);
 
