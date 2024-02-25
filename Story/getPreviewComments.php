@@ -25,17 +25,11 @@ if($cardId !== null){
         $commentsResult[] = $row;
     }     
 
-    //2. 쿼리 결과가 존재하는 지 확인
-    if(!empty($commentsResult)){
-
-        //결과를 json 형식으로 클라이언트에 응답
-        header('Content-Type: application/json');
-        echo json_encode($commentsResult);
-
-    }else{
-        error_log("No comments found for cardId: " . $cardId);
-
-    }
+    //2. 쿼리 결과가 존재하든 없는 header와 함께 응답을 보냄
+    header('Content-Type: application/json');
+    echo json_encode($commentsResult);
+    // 이 방식을 사용하면, 클라이언트는 응답 본문을 체크하여 데이터가 있는지 없는지를 판단할 수 있으며,
+    // 사용자에게 적절한 메세지를 표시할 수 있음
 
 }else{
     error_log("No cardId provided in request");
