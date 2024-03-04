@@ -69,11 +69,14 @@ try{
     $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
     $stmtComment = $conn->prepare($sqlComment);
 
-    foreach($data -> comments as $index => $commentText){
-        // $commentItem 대신 $commentText를 사용합니다. $commentText는 직접 문자열입니다.
-        $cardId = $cardIds[$index];
-        //댓글과 스토리 카드의 순서 일치: $data->comments 배열에 있는 댓글의 순서와 $cardIds 배열에 저장된 스토리 카드 ID의 순서가 일치
-        $stmtComment ->execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
+    // $data->comments가 설정되어 있고, 배열인지 확인
+    if (isset($data->comments) && is_array($data->comments)) {
+        foreach($data -> comments as $index => $commentText){
+            // $commentItem 대신 $commentText를 사용합니다. $commentText는 직접 문자열입니다.
+            $cardId = $cardIds[$index];
+            //댓글과 스토리 카드의 순서 일치: $data->comments 배열에 있는 댓글의 순서와 $cardIds 배열에 저장된 스토리 카드 ID의 순서가 일치
+            $stmtComment ->execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
+        }
     }
     
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
