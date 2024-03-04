@@ -35,6 +35,7 @@ if($cardId !== null){
 
              if($count == 0){
                 // 폴더를 참조하는 다른 스토리 카드가 없으므로 폴더 삭제
+                // ON DELETE CASCADE 로 스토리 폴더가 삭제되면, 이를 참조하는 행(스토리 카드)도 삭제됨
                 $sql = "DELETE FROM storyFolder WHERE folder_id = :folder_id";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':folder_id', $folderId, PDO::PARAM_INT);
@@ -42,6 +43,9 @@ if($cardId !== null){
                 $folderDeleted = true; 
              }
 
+             // 스토리 폴더 삭제 시에는 실질적으로 행이 삭제되지 않음
+             // 해당 스토리 폴더가 이미 삭제되었거나 처음부터 존재하지 않는 경우에도, 
+             // 스토리 카드를 삭제하려는 쿼리가 문제없이 실행됐다면 $success는 true를 반환합니다.
              $sql = "DELETE FROM storyCard WHERE card_id = :card_id";
              $stmt = $conn->prepare($sql);
              $stmt->bindParam(':card_id', $cardId, PDO::PARAM_INT);
