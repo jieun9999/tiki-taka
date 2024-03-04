@@ -9,22 +9,44 @@ $json = file_get_contents('php://input');
 $data = json_decode($json);
 
 $userId = $data->userId;
+$folderId = isset($data->folderId) ? $data->folderId : null; 
 $uris = $data->uris;
-$title = $data->title;
-$location = $data->location;
+$title = isset($data->title) ? $data->title : null;
+$location = isset($data->location) ? $data->location : null;
 $displayImage = $data -> displayImage;
 
 try{
     //트랜잭션 시작
     $conn -> beginTransaction();
 
-    // 1.스토리 폴더 INSERT 쿼리 준비 및 실행
-    $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
-    $stmtFolder = $conn->prepare($sqlFolder);
-    $stmtFolder->execute([':userId' => $userId, ':dataType' => "image"]);
-    $folderId = $conn->lastInsertId();
+       // 기존 폴더에 추가하는 경우, 사진 수 검사 로직
+    if(!empty($folderId)){
 
-    // 2.스토리 카드 INSERT 쿼리 준비 및 실행
+        // 현재 folderId에 저장된 사진의 수 확인
+        $sqlCount = "SELECT COUNT(*) FROM storyCard WHERE folder_id = :folderId";
+        $stmtCount = $conn->prepare($sqlCount);
+        $stmtCount->execute([':folderId' => $folderId]);
+        $currentPhotoCount = $stmtCount->fetchColumn();
+
+        // 새로운 사진과 기존 사진의 총합 검사
+        $newPhotosCount = count($uris);
+        $totalPhotosCount = $currentPhotoCount + $newPhotosCount;
+
+        if ($totalPhotosCount > 10) {
+            echo json_encode(["success" => false, "message" => "한 폴더에 사진은 최대 10장까지 추가할 수 있습니다."]);
+            exit; 
+        }
+
+    }else{
+        // 새 스토리 폴더 생성 로직
+        $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
+        $stmtFolder = $conn->prepare($sqlFolder);
+        $stmtFolder->execute([':userId' => $userId, ':dataType' => "image"]);
+        $folderId = $conn->lastInsertId();
+
+    }
+
+    // 스토리 카드 INSERT 쿼리 준비 및 실행
     $sqlCard = "INSERT INTO storyCard (folder_id, user_id, image, data_type) VALUES (:folderId, :userId, :image, :dataType)";
     $stmtCard = $conn->prepare($sqlCard);
     $cardIds = []; 
@@ -34,7 +56,7 @@ try{
         $cardIds[] = $conn -> lastInsertId();
     }
 
-    // 3.storyFolder 테이블의 display_image를 업데이트
+    // storyFolder 테이블의 display_image를 업데이트
     if(!empty($displayImage)){
         $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
                              WHERE folder_id = :folderId";
@@ -42,7 +64,7 @@ try{
         $stmtUpdateFolder->execute([':displayImage' => $displayImage, ':folderId' => $folderId, ':title' => $title, ':location' => $location]);
     }
 
-    //4. 댓글 INSERT 쿼리 준비 및 실행
+    // 댓글 INSERT 쿼리 준비 및 실행
     // 쿼리 준비는 반복문 바깥에서 한 번만 수행
     $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
     $stmtComment = $conn->prepare($sqlComment);
@@ -56,13 +78,12 @@ try{
     
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
-    //성공응답
     echo json_encode(["success" => true, "message" => "게시 성공!"]);
 
 }catch(PDOException $e) {
+
     // 오류 발생 시 트랜잭션 롤백
     $conn->rollback();
-    // 실패 응답
     echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: " . $e->getMessage()]);
 }
 
