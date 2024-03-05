@@ -37,6 +37,11 @@ try{
             exit; 
         }
 
+        // 여기서 기존 폴더의 data_type을 업데이트
+        $sqlUpdateFolderDataType = "UPDATE storyFolder SET data_type = 'image' WHERE folder_id = :folderId";
+        $stmtUpdateFolderDataType = $conn->prepare($sqlUpdateFolderDataType);
+        $stmtUpdateFolderDataType->execute([':folderId' => $folderId]);
+
     }else{
         // 새 스토리 폴더 생성 로직
         $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
