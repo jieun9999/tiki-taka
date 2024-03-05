@@ -14,6 +14,7 @@ $uris = $data->uris;
 $title = isset($data->title) ? $data->title : null;
 $location = isset($data->location) ? $data->location : null;
 $displayImage = $data -> displayImage;
+$comments = isset($data->comments) ? $data->comments : null;
 
 try{
     //트랜잭션 시작
@@ -74,8 +75,7 @@ try{
     $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
     $stmtComment = $conn->prepare($sqlComment);
 
-    // $data->comments가 설정되어 있고, 배열인지 확인
-    if (isset($data->comments) && is_array($data->comments)) {
+    if (!empty($comments) && is_array($data->comments)){
         foreach($data -> comments as $index => $commentText){
             // $commentItem 대신 $commentText를 사용합니다. $commentText는 직접 문자열입니다.
             $cardId = $cardIds[$index];
