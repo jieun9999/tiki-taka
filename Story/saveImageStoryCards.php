@@ -26,14 +26,14 @@ try{
         $sqlCount = "SELECT COUNT(*) FROM storyCard WHERE folder_id = :folderId";
         $stmtCount = $conn->prepare($sqlCount);
         $stmtCount->execute([':folderId' => $folderId]);
-        $currentPhotoCount = $stmtCount->fetchColumn();
+        $currentCardsCount = $stmtCount->fetchColumn();
 
-        // 새로운 사진과 기존 사진의 총합 검사
-        $newPhotosCount = count($uris);
-        $totalPhotosCount = $currentPhotoCount + $newPhotosCount;
+        // 새로운 카드와 기존 카드의 총합 검사
+        $newCardsCount = count($uris);
+        $totalCardsCount = $currentCardsCount + $newCardsCount;
 
-        if ($totalPhotosCount > 10) {
-            echo json_encode(["success" => false, "message" => "한 폴더에 사진은 최대 10장까지 추가할 수 있습니다."]);
+        if ($totalCardsCount > 10) {
+            echo json_encode(["success" => false, "message" => "한 폴더에 스토리 카드는 최대 10장까지 추가할 수 있습니다."]);
             exit; 
         }
 
