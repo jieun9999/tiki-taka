@@ -9,28 +9,32 @@ $json = file_get_contents('php://input');
 $data = json_decode($json);
 
 $userId = $data->userId;
+$folderId = isset($data->folderId) ? $data->folderId : null; 
 $text = $data->text;
-$title = $data->title;
-$location = $data->location;
+$title = isset($data->title) ? $data->title : null;
+$location = isset($data->location) ? $data->location : null;
 
 try{
     //트랜잭션 시작
     $conn -> beginTransaction();
 
-    // 1.스토리 폴더 INSERT 쿼리 준비 및 실행
-    $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
-    $stmtFolder = $conn->prepare($sqlFolder);
-    $stmtFolder->execute([':userId' => $userId, ':dataType' => "text"]);
-    $folderId = $conn->lastInsertId();
+    // folderId가 주어지지 않은 경우에만 새로운 폴더를 생성
+    if(empty($folderId)){
+        $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
+        $stmtFolder = $conn->prepare($sqlFolder);
+        $stmtFolder->execute([':userId' => $userId, ':dataType' => "text"]);
+        $folderId = $conn->lastInsertId();
+    
+    }
 
-    // 2.스토리 카드 INSERT 쿼리 준비 및 실행
+    // 스토리 카드 INSERT 쿼리 준비 및 실행
     $sqlCard = "INSERT INTO storyCard (folder_id, user_id, memo, data_type) VALUES (:folderId, :userId, :memo, :dataType)";
     $stmtCard = $conn->prepare($sqlCard);
     $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':memo' => $text, ':dataType' => "text"]);
     $cardId = $conn -> lastInsertId();
 
-    // 3.storyFolder 테이블의 title과 location을 업데이트
-    if(!empty($text)){
+    // folderId가 새로 생성된 경우에만 title과 location을 업데이트
+    if(!empty($text) && !empty($folderId) && empty($data->folderId)){
         $sqlUpdateFolder = "UPDATE storyFolder SET title = :title, location = :location
                              WHERE folder_id = :folderId";
         $stmtUpdateFolder = $conn->prepare($sqlUpdateFolder);
