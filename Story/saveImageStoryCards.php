@@ -13,14 +13,14 @@ $folderId = isset($data->folderId) ? $data->folderId : null;
 $uris = $data->uris;
 $title = isset($data->title) ? $data->title : null;
 $location = isset($data->location) ? $data->location : null;
-$displayImage = $data -> displayImage;
+$displayImage = isset($data->displayImage) ? $data->displayImage : null;
 $comments = isset($data->comments) ? $data->comments : null;
 
 try{
     //트랜잭션 시작
     $conn -> beginTransaction();
 
-       // 기존 폴더에 추가하는 경우, 사진 수 검사 로직
+    //기존 폴더에 추가하는 경우, 카드 수 검사 로직
     if(!empty($folderId)){
 
         // 현재 folderId에 저장된 사진의 수 확인
