@@ -9,8 +9,8 @@ require '../db_connect.php'; // 데이터베이스 연결
 $email = $_POST['email']; // 유저로부터 받은 이메일
 $authCode = $_POST['authCode'];// 유저로부터 받은 인증번호
 
-// 현재 시간
-$currentDatetime = date('Y-m-d H:i:s');
+date_default_timezone_set('America/New_York'); // 미국 동부 표준시로 시간대 설정
+$currentDatetime = date('Y-m-d H:i:s'); // 현재 시간을 'Y-m-d H:i:s' 형식으로 가져옴
 
 // 인증번호 일치 여부 및 인증코드 날짜와 현재 시간 비교
 //이메일과 인증번호가 모두 일치하고, 인증번호 생성 시간이 현재 시간으로부터 10분 이내인 경우에만 인증 성공으로 간주

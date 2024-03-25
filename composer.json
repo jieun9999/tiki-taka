@@ -12,6 +12,8 @@
         }
     ],
     "require": {
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "^6.9",
+      "ext-pdo": "*",
+        "ext-json": "*"
     }
 }

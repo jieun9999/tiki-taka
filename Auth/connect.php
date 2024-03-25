@@ -58,7 +58,7 @@ if ($result) {
 
     if ($updateSuccess1 && $updateSuccess2) {
 
-        echo json_encode(["success" => true, "message" => "연결에 성공하셨습니다"]);
+        echo json_encode(["success" => true, "message" => "연결에 성공하셨습니다", "partnerId" => $user2Id]);
     } else {
         echo json_encode(["success" => false, "message" => "연결에 실패하였습니다. partner_id 업데이트 오류"]);
     }
