@@ -8,7 +8,7 @@ $roomId = isset($_GET['roomId']) ? $_GET['roomId'] : null;
 
 if($roomId !== null){
     
-    $sql = "SELECT m.message_id, m.sender_id, m.content, m.created_at, m.date_marker, u.profile_image
+    $sql = "SELECT m.message_id, m.sender_id, m.content, m.created_at, m.date_marker, m.is_read, u.profile_image
             FROM message AS m
             LEFT JOIN userProfile AS u ON m.sender_id = u.user_id 
             WHERE room_id = :roomId
