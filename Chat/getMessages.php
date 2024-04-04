@@ -30,7 +30,6 @@ if($roomId !== null){
         //결과를 json 형식으로 클라이언트에 응답
         header('Content-Type: application/json');
         echo json_encode($messagesResult);
-        error_log(print_r($messagesResult, true));
 
     }else{
         error_log("No comments found for roomId: " . $roomId);
