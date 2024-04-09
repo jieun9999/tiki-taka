@@ -1,9 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 function sendFcmNotification($device_token, $messageData){
+    // 서버 키를 저장한 파일 경로
+    $serverKeyFile = '/var/www/html/FCM/server_key.txt';
     // URL 및 서버 키 설정
     $url = 'https://fcm.googleapis.com/fcm/send';
-    $server_key  = 'e1428d776e58e5fbb6c821b89302c2189818b17b';
+    $server_key = file_get_contents($serverKeyFile);
 
     // 데이터 및 헤더 준비
     $fields = array(
@@ -20,7 +24,7 @@ function sendFcmNotification($device_token, $messageData){
     // cURL 사용
     // PHP의 cURL 라이브러리를 사용하여 FCM 서버에 POST 요청을 보냅니다
     // 요청은 json_encode로 인코딩된 $fields를 바디로 포함합니다.
-    $ch = curl_init();
+    $ch =curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -34,13 +38,17 @@ function sendFcmNotification($device_token, $messageData){
 
     if ($result === FALSE) {
          // cURL 실행에 실패했을 경우
-        die('Oops! FCM Send Error: ' . curl_error($ch));
-        return false;
+         $errorMessage = 'Oops! FCM Send Error: ' . curl_error($ch);
+         error_log($errorMessage); // 에러 로그 기록
+         die($errorMessage);
+         return false;
     }elseif($httpStatusCode == 200){
          // 요청이 성공적으로 처리되었을 경우
         return true;
     }else {
         // 그 외의 경우, 요청은 처리되었으나 성공적이지 않은 경우
+        $errorMessage = 'FCM Send Error: HTTP status code ' . $httpStatusCode;
+        error_log($errorMessage); // 에러 로그 기록
         return false;
     }
 

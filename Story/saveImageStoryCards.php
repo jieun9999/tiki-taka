@@ -15,6 +15,7 @@ $title = isset($data->title) ? $data->title : null;
 $location = isset($data->location) ? $data->location : null;
 $displayImage = isset($data->displayImage) ? $data->displayImage : null;
 $comments = isset($data->comments) ? $data->comments : null;
+$partnerId = isset($data->partnerId) ? $data->partnerId : null;
 
 try{
     //트랜잭션 시작
@@ -89,8 +90,8 @@ try{
     $conn->commit();
 
     // 알림 데이터 구성
-    require_once '../FCM/selectFcmToken.php';
-    $result = selectFcmToken($conn, $userId);
+    require_once '../FCM/selectFcmTokenAndProfileImg.php';
+    $result = selectFcmTokenAndProfileImg($conn, $partnerId);
     $token = $result['token'];
     $userProfile = $result['profile_image'];
     $name = $result['name'];

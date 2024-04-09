@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 // 데이터베이스 연결 객체를 인자로 받음
 function selectFcmTokenAndProfileImg($conn, $userId){
@@ -6,7 +8,7 @@ function selectFcmTokenAndProfileImg($conn, $userId){
     try{
     $sql = "SELECT f.token, u.profile_image, u.name
             FROM fcmToken f
-            JOIN userProfile u ON f.user_id == u.user_id
+            JOIN userProfile u ON f.user_id = u.user_id
             WHERE f.user_id = :userId";
             
     $stmt = $conn->prepare($sql);
