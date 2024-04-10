@@ -167,7 +167,7 @@ if (isset($_FILES['uris'])) {
         $userProfile = $result['profile_image'];
         $name = $result['name'];
         $messageData = [
-            'flag' => 'story_notification',
+            'flag' => 'story_image_notification',
             'title' => 'tiki taka',
             'body' => $name.'님이 '.$numberOfCards.' 개의 사진을 추가했습니다. 확인해보세요!',
             'userProfile' => $userProfile,

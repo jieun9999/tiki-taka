@@ -13,6 +13,7 @@ $folderId = isset($data->folderId) ? $data->folderId : null;
 $text = $data->text;
 $title = isset($data->title) ? $data->title : null;
 $location = isset($data->location) ? $data->location : null;
+$partnerId = isset($data->partnerId) ? $data->partnerId : null;
 
 try{
     //트랜잭션 시작
@@ -43,8 +44,33 @@ try{
     
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
-    //성공응답
-    echo json_encode(["success" => true, "message" => "게시 성공!"]);
+
+
+    // 알림 데이터 구성
+    require_once '../FCM/selectFcmTokenAndProfileImg.php';
+    $result = selectFcmTokenAndProfileImg($conn, $partnerId);
+    error_log('partnerId'.$partnerId);
+    $token = $result['token'];
+    $userProfile = $result['profile_image'];
+    $name = $result['name'];
+    $messageData = [
+        'flag' => 'story_memo_notification',
+        'title' => 'tiki taka',
+        'body' => $name.'님이 메모를 추가했습니다. 확인해보세요!',
+        'userProfile' => $userProfile,
+        'cardId' => $cardId
+        ];
+    
+    // FCM 서버에 알림 데이터를 보내기
+    // require_once : 다른 파일을 현재 스크립트에 포함시킬 때 사용
+    require_once '../FCM/sendFcmNotification.php';
+    $resultFCM = sendFcmNotification($token, $messageData);
+    
+    if($resultFCM){
+        echo json_encode(["success" => true, "message" => "게시 성공!"]);
+    }else{
+        echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: sendFcmNotification() 실행시 문제가 생김"]);
+    }
 
 }catch(PDOException $e) {
     // 오류 발생 시 트랜잭션 롤백
