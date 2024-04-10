@@ -31,17 +31,31 @@ $folderId = isset($_POST['folderId']) ? $_POST['folderId']: null;
 //이미지 파일 데이터
 // (1)displayImage 처리
 $displayImage = $_FILES['displayImage']; // 단일 파일 처리
-$key = 'uploads/' . date('Y/m/d/') . $displayImage['name']; // S3에 저장될 객체의 키 (파일 이름)
-$filePath = $displayImage['tmp_name']; // 임시 파일 경로
 $contentType = $displayImage['type']; // 파일 타입
+// $displayImageContent = print_r($_FILES['displayImage'], true);
+// error_log("Received ['displayImage']: " . $displayImageContent);
 
-// 파일 업로드 시도
-$result = $s3Uploader -> upload($key, $filePath, $contentType);
-if ($result['success']) {
-    $displayImage = $result['url']; // s3에서 받은 url 할당
-} else {
-    // 업로드 실패한 경우
-   error_log("Upload failed: displayImage" . $result['message'] . "\n");
+// 파일 타입이 이미지인 경우에만 파일 업로드를 시도
+// 문자열인 경우에는 이미 서버에 업로드 된, 웹 경로이기 때문에 다시 서버에 올릴 필요가 없음
+if (strpos($contentType, "image/") === 0) {
+    $key = 'uploads/' . date('Y/m/d/') . $displayImage['name']; // S3에 저장될 객체의 키 (파일 이름)
+    $filePath = $displayImage['tmp_name']; // 임시 파일 경로
+
+    $result = $s3Uploader -> upload($key, $filePath, $contentType);
+    if ($result['success']) {
+        $displayImage = $result['url']; // s3에서 받은 url 할당
+    } else {
+        // 업로드 실패한 경우
+    error_log("Upload failed: displayImage" . $result['message'] . "\n");
+    }
+}
+else{
+    // 클라이언트에서 웹경로 데이터를 보내준 경우
+    // full_path 정보는 이미지 파일의 웹 경로를 나타내고 있습니다.
+    // 이는 클라이언트가 이미지를 업로드하는 대신, 이미 인터넷 상에 호스팅되어 있는 이미지의 URL을 직접 전송하여 사용하고자 할 때 발생하는 경우입니다.
+    $displayImage = $displayImage['full_path'];
+    // error_log("displayImage: " . print_r($displayImage, true));
+
 }
 
 // (2)uris처리
