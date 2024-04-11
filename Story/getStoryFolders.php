@@ -9,7 +9,8 @@ $partnerId = $_GET['partnerId'];
 // error_log("story data: " . $userId);
 
 // 스토리 폴더 리스트 가져오기
-$sql = "SELECT * FROM storyFolder WHERE user_id = :userId OR user_id = :partnerId";
+$sql = "SELECT * FROM storyFolder WHERE user_id = :userId OR user_id = :partnerId
+        ORDER BY created_at ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
 $stmt->bindParam(':partnerId', $partnerId, PDO::PARAM_INT);

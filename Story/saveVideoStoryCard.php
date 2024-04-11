@@ -115,7 +115,7 @@ try{
         $sqlUpdateFolderDataType = "UPDATE storyFolder SET data_type = 'image' WHERE folder_id = :folderId";
         $stmtUpdateFolderDataType = $conn->prepare($sqlUpdateFolderDataType);
         $stmtUpdateFolderDataType->execute([':folderId' => $folderId]);
-
+        
     }else{
         // 새 스토리 폴더 생성 로직
         $sqlFolder = "INSERT INTO storyFolder (user_id, data_type) VALUES (:userId, :dataType)";
@@ -124,23 +124,24 @@ try{
         $folderId = $conn->lastInsertId();
 
     }
-
+    
+    // video_thumbnail 칼럼을 아예 삭제하고, video 칼럼만 존재함
     // 스토리 카드 INSERT 쿼리 준비 및 실행
-    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type, video_thumbnail) VALUES (:folderId, :userId, :video, :dataType, :video_thumbnail)";
+    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type) VALUES (:folderId, :userId, :video, :dataType)";
     $stmtCard = $conn->prepare($sqlCard);
     $cardIds = []; 
     // 삽입된 각 스토리 카드의 ID를 저장할 배열
     foreach($uris as $uri){
-        $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video", ':video_thumbnail' => $displayImage]);
-        $cardIds[] = $conn -> lastInsertId();
+    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video"]);
+    $cardIds[] = $conn -> lastInsertId();
     }
-
+     
     // storyFolder 테이블의 display_image를 업데이트
     if(!empty($displayImage)){
-        $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
-                             WHERE folder_id = :folderId";
-        $stmtUpdateFolder = $conn->prepare($sqlUpdateFolder);
-        $stmtUpdateFolder->execute([':displayImage' => $displayImage, ':folderId' => $folderId, ':title' => $title,':location' => $location]);
+    $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
+                                     WHERE folder_id = :folderId";
+    $stmtUpdateFolder = $conn->prepare($sqlUpdateFolder);
+    $stmtUpdateFolder->execute([':displayImage' => $displayImage, ':folderId' => $folderId, ':title' => $title,':location' => $location]);
     }
 
     // 댓글 INSERT 쿼리 준비 및 실행
