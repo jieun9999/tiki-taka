@@ -5,12 +5,14 @@ error_reporting(E_ALL);
 
 require '../db_connect.php'; // 데이터베이스 연결
 $userId = $_GET['userId']; // 클라이언트에서 받은 userId
+$partnerId = $_GET['partnerId'];
 // error_log("story data: " . $userId);
 
 // 스토리 폴더 리스트 가져오기
-$sql = "SELECT * FROM storyFolder WHERE user_id = :userId";
+$sql = "SELECT * FROM storyFolder WHERE user_id = :userId OR user_id = :partnerId";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+$stmt->bindParam(':partnerId', $partnerId, PDO::PARAM_INT);
 $stmt->execute();
 
 // 클라이언트에게 JSON 형태로 응답
