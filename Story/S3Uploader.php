@@ -35,6 +35,7 @@ class S3Uploader{
         
             // 업로드 성공 시, 결과 반환
             return ['success' => true, 'url' => $result['ObjectURL']];
+            // 이미지와 동영상 파일 모두 url을 반환받음
 
         } catch (S3Exception $e) {
 
