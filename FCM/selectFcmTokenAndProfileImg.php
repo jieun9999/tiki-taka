@@ -3,23 +3,32 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // 데이터베이스 연결 객체를 인자로 받음
-function selectFcmTokenAndProfileImg($conn, $userId){
+function selectFcmTokenAndProfileImg($conn, $partnerId, $userId){
 
     try{
-    $sql = "SELECT f.token, u.profile_image, u.name
-            FROM fcmToken f
-            JOIN userProfile u ON f.user_id = u.user_id
-            WHERE f.user_id = :userId";
-            
+    $sql = "SELECT token
+            FROM fcmToken 
+            WHERE user_id = :partnerId";
     $stmt = $conn->prepare($sql);
-    $stmt ->execute([':userId' => $userId]);
-    $result = $stmt -> fetch(PDO::FETCH_ASSOC);
+    $stmt ->execute([':partnerId' => $partnerId]);
+    $fcmToken = $stmt -> fetch(PDO::FETCH_ASSOC);
 
-    if ($result) {
-        return $result;
-    } else {
-        return null;
-    }
+    $sql2 = "SELECT profile_image, name 
+            FROM userProfile
+            WHERE user_id = :userId";
+    $stmt2 = $conn->prepare($sql2);
+    $stmt2 ->execute([':userId' => $userId]);
+    $profileInfo = $stmt2 -> fetch(PDO::FETCH_ASSOC);
+
+        // $profileInfo와 $fcmToken이 모두 존재할 때만 값을 반환
+        if ($profileInfo !== null && $fcmToken !== null) {
+            return [
+                'fcmToken' => $fcmToken,
+                'profileInfo' => $profileInfo
+            ];
+        } else {
+            return null; // $profileInfo나 $fcmToken 중 하나라도 null이면 null 반환
+        }
 
     }catch(PDOException $e){
         // 오류 처리

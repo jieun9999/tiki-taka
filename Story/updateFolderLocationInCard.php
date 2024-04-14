@@ -11,9 +11,10 @@ $data = json_decode($json, true);
 
 $folderId = isset($data['folder_id']) ? $data['folder_id'] : null;
 $cardId = isset($data['card_id']) ? $data['card_id'] : null;
+$userId = isset($data['user_id']) ? $data['user_id'] : null;
 $partnerId = isset($data['partnerId']) ? $data['partnerId'] : null;
 
-if($folderId !== null && $cardId !== null && $partnerId !== null){
+if($folderId !== null && $cardId !== null && $partnerId !== null && $userId !== null){
     try{
         $sql = "UPDATE storyCard SET folder_id = :folder_id
                 WHERE card_id = :card_id";
@@ -29,15 +30,17 @@ if($folderId !== null && $cardId !== null && $partnerId !== null){
 
             // 알림 데이터 구성
             require_once '../FCM/selectFcmTokenAndProfileImg.php';
-            $result = selectFcmTokenAndProfileImg($conn, $partnerId);
-            $token = $result['token'];
-            $userProfile = $result['profile_image'];
-            $name = $result['name'];
+            $result = selectFcmTokenAndProfileImg($conn, $partnerId, $userId);
+            $tokenRow = $result['fcmToken'];
+            $token = $tokenRow['token'];
+            $profileInfo = $result['profileInfo'];
+            $userImg = $profileInfo['profile_image'];
+            $name = $profileInfo['name'];
             $messageData = [
                 'flag' => 'story_location_update_notification',
                 'title' => 'tiki taka',
                 'body' => $name.'님이 스토리 폴더를 수정했습니다. 확인해보세요!',
-                'userProfile' => $userProfile,
+                'userProfile' => $userImg,
                 'folderId' => $folderId
             ];
 
