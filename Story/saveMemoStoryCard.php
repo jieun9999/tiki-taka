@@ -48,19 +48,20 @@ try{
 
     // 알림 데이터 구성
     require_once '../FCM/selectFcmTokenAndProfileImg.php';
-    $result = selectFcmTokenAndProfileImg($conn, $partnerId);
-    error_log('partnerId'.$partnerId);
-    $token = $result['token'];
-    $userProfile = $result['profile_image'];
-    $name = $result['name'];
-    $messageData = [
-        'flag' => 'story_memo_notification',
-        'title' => 'tiki taka',
-        'body' => $name.'님이 메모를 추가했습니다. 확인해보세요!',
-        'userProfile' => $userProfile,
-        'cardId' => $cardId
-        ];
-    
+        $result = selectFcmTokenAndProfileImg($conn, $partnerId, $userId);
+        $tokenRow = $result['fcmToken'];
+        $token = $tokenRow['token'];
+        $profileInfo = $result['profileInfo'];
+        $userImg = $profileInfo['profile_image'];
+        $name = $profileInfo['name'];
+        $messageData = [
+            'flag' => 'story_memo_notification',
+            'title' => 'tiki taka',
+            'body' => $name.'님이 메모를 추가했습니다. 확인해보세요!',
+            'userProfile' => $userImg,
+            'cardId' => $cardId
+            ];
+        
     // FCM 서버에 알림 데이터를 보내기
     // require_once : 다른 파일을 현재 스크립트에 포함시킬 때 사용
     require_once '../FCM/sendFcmNotification.php';
