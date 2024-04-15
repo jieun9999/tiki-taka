@@ -163,15 +163,17 @@ try{
 
     // 4. 알림 데이터 구성
     require_once '../FCM/selectFcmTokenAndProfileImg.php';
-    $result = selectFcmTokenAndProfileImg($conn, $partnerId);
-    $token = $result['token'];
-    $userProfile = $result['profile_image'];
-    $name = $result['name'];
+    $result = selectFcmTokenAndProfileImg($conn, $partnerId, $userId);
+    $tokenRow = $result['fcmToken'];
+    $token = $tokenRow['token'];
+    $profileInfo = $result['profileInfo'];
+    $userImg = $profileInfo['profile_image'];
+    $name = $profileInfo['name'];
     $messageData = [
         'flag' => 'story_video_notification',
         'title' => 'tiki taka',
         'body' => $name.'님이 동영상을 추가했습니다. 확인해보세요!',
-        'userProfile' => $userProfile,
+        'userProfile' => $userImg,
         'folderId' => $folderId
     ];
 
