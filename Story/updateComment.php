@@ -23,6 +23,15 @@ $sql = "SELECT card_id from comment WHERE comment_id = :commentId";
             $result = $stmt -> fetch(PDO::FETCH_ASSOC);
             $cardId = $result['card_id'];
         }
+ 
+// 선택된 카드조회
+$sql = "SELECT * FROM storyCard WHERE card_id = :cardId";
+$stmt = $conn->prepare($sql);
+$success = $stmt->execute([':cardId' => $cardId]);
+if($success){
+    $selectedCard = $stmt->fetch(PDO::FETCH_ASSOC);
+    $dataType = $selectedCard['data_type'];
+}
 
 $sql2 = "UPDATE comment SET comment_text = :commentText
         WHERE comment_id = :commentId";
@@ -44,6 +53,7 @@ $sql2 = "UPDATE comment SET comment_text = :commentText
             $name = $profileInfo['name'];
             $messageData = [
                 'flag' => 'story_comment_update_notification',
+                'type' => $dataType,
                 'title' => 'tiki taka',
                 'body' => $name.'님이 댓글을 수정했습니다. 확인해보세요!',
                 'userProfile' => $userImg,

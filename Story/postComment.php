@@ -23,7 +23,14 @@ $sql = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :u
 $stmt = $conn -> prepare($sql);
 $success = $stmt -> execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
 
-if($success){
+// 선택된 카드조회
+$sql = "SELECT * FROM storyCard WHERE card_id = :cardId";
+$stmt = $conn->prepare($sql);
+$success2 = $stmt->execute([':cardId' => $cardId]);
+$selectedCard = $stmt->fetch(PDO::FETCH_ASSOC);
+$dataType = $selectedCard['data_type'];
+
+if($success && $success2){
 
     // 알림 데이터 구성
     require_once '../FCM/selectFcmTokenAndProfileImg.php';
@@ -35,6 +42,7 @@ if($success){
     $name = $profileInfo['name'];
     $messageData = [
         'flag' => 'story_comment_notification',
+        'type' => $dataType,
         'title' => 'tiki taka',
         'body' => $name.'님이 댓글을 추가했습니다. 확인해보세요!',
         'userProfile' => $userImg,
