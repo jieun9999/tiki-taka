@@ -70,5 +70,5 @@ if($folderId !== null && $cardId !== null && $partnerId !== null && $userId !== 
     
     }
 }else {
-    error_log("Folder ID or Card ID or PartnerId is required.");
+    error_log("Folder ID or Card ID or PartnerId, userId is required.");
 }
