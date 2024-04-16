@@ -114,6 +114,7 @@ if (isset($_FILES['uris'])) {
         if ($uploadResult['success']) {
             // 썸네일 업로드 성공, S3 URL 반환
             $thumbnailUrl = $uploadResult['url'];
+            $displayImage = $thumbnailUrl;
         } else {
             // 썸네일 업로드 실패
             error_log("Upload failed: thumbnail " . $uploadResult['message']);
