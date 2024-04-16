@@ -87,6 +87,45 @@ if (isset($_FILES['uris'])) {
 
     }
 }
+//(3) 썸네일 얻기
+// ffmpeg로 동영상 Url에서 썸네일 jpg를 추출한다
+
+    $videoUrl = $uris[0];
+    $originalThumbnailName = pathinfo($uris[0], PATHINFO_FILENAME) . "_thumbnail.jpg"; // 원본 파일명에서 확장자를 제외하고 '_thumbnail.jpg' 추가
+    $thumbnailPath = '/tmp/thumbnail.jpg'; // 썸네일을 임시로 저장할 경로
+
+    // ffmpeg를 사용하여 썸네일 생성
+    $ffmpegCommand = "ffmpeg -i '{$videoUrl}' -ss 00:00:01 -vframes 1 {$thumbnailPath} 2>&1";
+    exec($ffmpegCommand, $output, $returnVar);
+
+    // 로그 추가
+    error_log("ffmpeg command executed: " . $ffmpegCommand);
+    error_log("ffmpeg output: " . implode("\n", $output));
+    error_log("ffmpeg return var: " . $returnVar);
+    
+    // ffmpeg 명령의 실행 결과 확인
+    if ($returnVar === 0) {
+        // 썸네일 생성 성공
+        $thumbnailKey = 'thumbnails/' . date('Y/m/d/') . $originalThumbnailName;
+        $contentType = 'image/jpeg';
+
+        // S3에 썸네일 업로드
+        $uploadResult = $s3Uploader->upload($thumbnailKey, $thumbnailPath, $contentType);
+        if ($uploadResult['success']) {
+            // 썸네일 업로드 성공, S3 URL 반환
+            $thumbnailUrl = $uploadResult['url'];
+        } else {
+            // 썸네일 업로드 실패
+            error_log("Upload failed: thumbnail " . $uploadResult['message']);
+        }
+    } else {
+        // 썸네일 생성 실패
+        error_log("Thumbnail creation failed: " . implode("\n", $output));
+    }
+
+    // 임시 파일 삭제
+    unlink($thumbnailPath);
+
 
 // 3. DB에 url 저장하기
 try{
@@ -125,14 +164,14 @@ try{
 
     }
     
-    // video_thumbnail 칼럼을 아예 삭제하고, video 칼럼만 존재함
+    // 추출한 썸네일 url을 video_thumbnail 칼럼에 추가
     // 스토리 카드 INSERT 쿼리 준비 및 실행
-    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type) VALUES (:folderId, :userId, :video, :dataType)";
+    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type, video_thumbail) VALUES (:folderId, :userId, :video, :dataType, :video_thumbail)";
     $stmtCard = $conn->prepare($sqlCard);
     $cardIds = []; 
     // 삽입된 각 스토리 카드의 ID를 저장할 배열
     foreach($uris as $uri){
-    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video"]);
+    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video", ':video_thumbail' =>$thumbnailUrl]);
     $cardIds[] = $conn -> lastInsertId();
     }
      
