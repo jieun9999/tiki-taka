@@ -167,12 +167,12 @@ try{
     
     // 추출한 썸네일 url을 video_thumbnail 칼럼에 추가
     // 스토리 카드 INSERT 쿼리 준비 및 실행
-    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type, video_thumbail) VALUES (:folderId, :userId, :video, :dataType, :video_thumbail)";
+    $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type, video_thumbnail) VALUES (:folderId, :userId, :video, :dataType, :video_thumbnail)";
     $stmtCard = $conn->prepare($sqlCard);
     $cardIds = []; 
     // 삽입된 각 스토리 카드의 ID를 저장할 배열
     foreach($uris as $uri){
-    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video", ':video_thumbail' =>$thumbnailUrl]);
+    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video", ':video_thumbnail' =>$thumbnailUrl]);
     $cardIds[] = $conn -> lastInsertId();
     }
      
