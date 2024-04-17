@@ -4,7 +4,6 @@ error_reporting(E_ALL);
 
 require '../db_connect.php'; 
 $cardId = isset($_GET['cardId']) ? $_GET['cardId'] : null;
- error_log("cardId: " . $cardId);
 
 //1. cardId가 존재하는지 확인
 if($cardId !== null){
@@ -32,7 +31,7 @@ if($cardId !== null){
         echo json_encode($cardResult);
 
     }else{
-        error_log("No comments found for cardId: " . $cardId);
+        // error_log("No comments found for cardId: " . $cardId);
 
     }
 
