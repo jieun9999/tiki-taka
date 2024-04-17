@@ -97,11 +97,6 @@ if (isset($_FILES['uris'])) {
     // ffmpeg를 사용하여 썸네일 생성
     $ffmpegCommand = "ffmpeg -i '{$videoUrl}' -ss 00:00:01 -vframes 1 {$thumbnailPath} 2>&1";
     exec($ffmpegCommand, $output, $returnVar);
-
-    // 로그 추가
-    error_log("ffmpeg command executed: " . $ffmpegCommand);
-    error_log("ffmpeg output: " . implode("\n", $output));
-    error_log("ffmpeg return var: " . $returnVar);
     
     // ffmpeg 명령의 실행 결과 확인
     if ($returnVar === 0) {
