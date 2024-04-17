@@ -8,7 +8,7 @@ $cardId = isset($_GET['cardId']) ? $_GET['cardId'] : null;
 //1. cardId가 존재하는지 확인
 if($cardId !== null){
     // storyCard 테이블과 userProfile 테이블을 조인하여, 카드id, 카드이미지, 카드좋아요, 카드상대방좋아요, 카드생성날짜, 유저id, 유저 프로필, 유저이름을 가져온다.
-    $sql = "SELECT s.card_id, s.user_id, s.user_a_likes, s.user_b_likes, s.created_at, s.data_type, s.image, s.memo, s.video
+    $sql = "SELECT s.card_id, s.user_id, s.user_a_likes, s.user_b_likes, s.created_at, s.data_type, s.image, s.memo, s.video, s.video_thumbnail
                 ,u.user_id, u.name, u.profile_image
             FROM storyCard AS s
             JOIN userProfile AS u ON s.user_id = u.user_id
