@@ -16,6 +16,7 @@ class S3Uploader{
                 'key' => $accessKey,
                 'secret' => $secretKey,
             ],
+            'use_accelerate_endpoint' => true
         ]);
         $this->bucket = $bucket;
     }
