@@ -31,17 +31,13 @@ $folderId = isset($_POST['folderId']) ? $_POST['folderId']: null;
 
 //이미지 파일 데이터
 
-// (1)uris처리
+// (1)uri처리
 // 파일이 업로드된 각각의 파일에 대해 반복하여 처리
-if (isset($_FILES['uris'])) {
-    // $urisContent = print_r($_FILES['uris'], true);
-    // error_log("Received ['uris']: " . $urisContent);
-    $fileCount = count($_FILES['uris']['name']); // 여러 파일 처리
+if (isset($_FILES['uri'])) {
 
-    for ($i = 0; $i < $fileCount; $i++) {
-        $tmpFilePath = $_FILES['uris']['tmp_name'][$i];
-        $originalFileName = $_FILES['uris']['name'][$i];
-        $contentType = $_FILES['uris']['type'][$i];
+        $tmpFilePath = $_FILES['uri']['tmp_name'];
+        $originalFileName = $_FILES['uri']['name'];
+        $contentType = $_FILES['uri']['type'];
 
         // S3에 업로드할 객체 키 생성
         $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
@@ -52,13 +48,12 @@ if (isset($_FILES['uris'])) {
         // 업로드 결과에 따라 처리
         if ($result['success']) {
             // 성공적으로 업로드된 경우 처리
-            $uris[] = $result['url'];
+            $videoUrl = $result['url'];
         } else {
             // 업로드 실패 시 처리
             error_log("Upload failed: uri" . $result['message'] . "\n");
-        }
+             }
     }
-}
 
 // (2)displayImage 처리
 $displayImage = $_FILES['displayImage']; // 단일 파일 처리
@@ -91,8 +86,7 @@ else{
 //(3) 썸네일 얻기
 // ffmpeg로 동영상 Url에서 썸네일 jpg를 추출한다
 
-    $videoUrl = $uris[0];
-    $originalThumbnailName = pathinfo($uris[0], PATHINFO_FILENAME) . "_thumbnail.jpg"; // 원본 파일명에서 확장자를 제외하고 '_thumbnail.jpg' 추가
+    $originalThumbnailName = pathinfo($videoUrl, PATHINFO_FILENAME) . "_thumbnail.jpg"; // 원본 파일명에서 확장자를 제외하고 '_thumbnail.jpg' 추가
     $thumbnailPath = '/tmp/thumbnail.jpg'; // 썸네일을 임시로 저장할 경로
 
     // ffmpeg를 사용하여 썸네일 생성
@@ -139,7 +133,7 @@ try{
         $currentCardsCount = $stmtCount->fetchColumn();
 
         // 새로운 카드와 기존 카드의 총합 검사
-        $newCardsCount = count($uris);
+        $newCardsCount = 1;
         $totalCardsCount = $currentCardsCount + $newCardsCount;
 
         if ($totalCardsCount > 10) {
@@ -166,12 +160,13 @@ try{
     $sqlCard = "INSERT INTO storyCard (folder_id, user_id, video, data_type, video_thumbnail) VALUES (:folderId, :userId, :video, :dataType, :video_thumbnail)";
     $stmtCard = $conn->prepare($sqlCard);
     $cardIds = []; 
-    // 삽입된 각 스토리 카드의 ID를 저장할 배열
-    foreach($uris as $uri){
-    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $uri, ':dataType' => "video", ':video_thumbnail' =>$thumbnailUrl]);
+
+    // 삽입된 스토리 카드의 ID를 저장할 배열
+    // 댓글 배열 고치는 것이 복잡해서, 댓글 배열은 이미지 카드와 같게 놔둠
+    $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $videoUrl, ':dataType' => "video", ':video_thumbnail' =>$thumbnailUrl]);
     $cardIds[] = $conn -> lastInsertId();
-    }
-     
+
+
     // storyFolder 테이블의 display_image를 업데이트
     if(!empty($displayImage)){
     $sqlUpdateFolder = "UPDATE storyFolder SET display_image = :displayImage, title = :title, location = :location
@@ -191,9 +186,8 @@ try{
             $cardId = $cardIds[$index];
             //댓글과 스토리 카드의 순서 일치: $data->comments 배열에 있는 댓글의 순서와 $cardIds 배열에 저장된 스토리 카드 ID의 순서가 일치
             $stmtComment ->execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
-        }
+        }    
     }
-    
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
 
