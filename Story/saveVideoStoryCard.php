@@ -70,6 +70,15 @@ if (isset($_FILES['uris'])) {
         $tmpFilePath = $_FILES['uris']['tmp_name'][$i];
         $originalFileName = $_FILES['uris']['name'][$i];
         $contentType = $_FILES['uris']['type'][$i];
+        $fileSize = $_FILES['uris']['size'][$i]; // 파일 크기 확인
+
+        // 파일 용량이 50MB를 초과하는지 확인
+        if ($fileSize > 50 * 1024 * 1024) {
+            // 용량이 50MB를 초과할 경우 클라이언트에게 메시지 전송 후 종료
+            echo json_encode(["success" => false, "message" => "50MB 이하의 파일을 업로드하세요"]);
+            exit;
+        }
+
         // S3에 업로드할 객체 키 생성
         $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
 
@@ -84,9 +93,9 @@ if (isset($_FILES['uris'])) {
             // 업로드 실패 시 처리
             error_log("Upload failed: uri" . $result['message'] . "\n");
         }
-
     }
 }
+
 //(3) 썸네일 얻기
 // ffmpeg로 동영상 Url에서 썸네일 jpg를 추출한다
 
