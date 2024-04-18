@@ -30,7 +30,37 @@ $partnerId = $_POST['partnerId'];
 $folderId = isset($_POST['folderId']) ? $_POST['folderId']: null;
 
 //이미지 파일 데이터
-// (1)displayImage 처리
+
+// (1)uris처리
+// 파일이 업로드된 각각의 파일에 대해 반복하여 처리
+if (isset($_FILES['uris'])) {
+    // $urisContent = print_r($_FILES['uris'], true);
+    // error_log("Received ['uris']: " . $urisContent);
+    $fileCount = count($_FILES['uris']['name']); // 여러 파일 처리
+
+    for ($i = 0; $i < $fileCount; $i++) {
+        $tmpFilePath = $_FILES['uris']['tmp_name'][$i];
+        $originalFileName = $_FILES['uris']['name'][$i];
+        $contentType = $_FILES['uris']['type'][$i];
+
+        // S3에 업로드할 객체 키 생성
+        $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
+
+        // 파일 업로드 시도
+        $result = $s3Uploader->upload($key, $tmpFilePath, $contentType);
+
+        // 업로드 결과에 따라 처리
+        if ($result['success']) {
+            // 성공적으로 업로드된 경우 처리
+            $uris[] = $result['url'];
+        } else {
+            // 업로드 실패 시 처리
+            error_log("Upload failed: uri" . $result['message'] . "\n");
+        }
+    }
+}
+
+// (2)displayImage 처리
 $displayImage = $_FILES['displayImage']; // 단일 파일 처리
 $contentType = $displayImage['type']; // 파일 타입
 // $displayImageContent = print_r($_FILES['displayImage'], true);
@@ -56,44 +86,6 @@ else{
     // 이는 클라이언트가 이미지를 업로드하는 대신, 이미 인터넷 상에 호스팅되어 있는 이미지의 URL을 직접 전송하여 사용하고자 할 때 발생하는 경우입니다.
     $displayImage = $displayImage['full_path'];
     // error_log("displayImage: " . print_r($displayImage, true));
-
-}
-
-// (2)uris처리
-// 파일이 업로드된 각각의 파일에 대해 반복하여 처리
-if (isset($_FILES['uris'])) {
-    // $urisContent = print_r($_FILES['uris'], true);
-    // error_log("Received ['uris']: " . $urisContent);
-    $fileCount = count($_FILES['uris']['name']); // 여러 파일 처리
-
-    for ($i = 0; $i < $fileCount; $i++) {
-        $tmpFilePath = $_FILES['uris']['tmp_name'][$i];
-        $originalFileName = $_FILES['uris']['name'][$i];
-        $contentType = $_FILES['uris']['type'][$i];
-        $fileSize = $_FILES['uris']['size'][$i]; // 파일 크기 확인
-
-        // 파일 용량이 50MB를 초과하는지 확인
-        if ($fileSize > 50 * 1024 * 1024) {
-            // 용량이 50MB를 초과할 경우 클라이언트에게 메시지 전송 후 종료
-            echo json_encode(["success" => false, "message" => "50MB 이하의 파일을 업로드하세요"]);
-            exit;
-        }
-
-        // S3에 업로드할 객체 키 생성
-        $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
-
-        // 파일 업로드 시도
-        $result = $s3Uploader->upload($key, $tmpFilePath, $contentType);
-
-        // 업로드 결과에 따라 처리
-        if ($result['success']) {
-            // 성공적으로 업로드된 경우 처리
-            $uris[] = $result['url'];
-        } else {
-            // 업로드 실패 시 처리
-            error_log("Upload failed: uri" . $result['message'] . "\n");
-        }
-    }
 }
 
 //(3) 썸네일 얻기
