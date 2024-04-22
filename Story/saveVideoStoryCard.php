@@ -29,8 +29,6 @@ $comments = isset($_POST['comments']) ? $_POST['comments']: null;
 $partnerId = $_POST['partnerId'];
 $folderId = isset($_POST['folderId']) ? $_POST['folderId']: null;
 
-//이미지 파일 데이터
-
 // (1)uri처리
 // 파일이 업로드된 각각의 파일에 대해 반복하여 처리
 if (isset($_FILES['uri'])) {
@@ -164,8 +162,8 @@ try{
     // 삽입된 스토리 카드의 ID를 저장할 배열
     // 댓글 배열 고치는 것이 복잡해서, 댓글 배열은 이미지 카드와 같게 놔둠
     $stmtCard->execute([':folderId' => $folderId, ':userId' => $userId, ':video' => $videoUrl, ':dataType' => "video", ':video_thumbnail' =>$thumbnailUrl]);
-    $cardIds[] = $conn -> lastInsertId();
-
+    // Retrieve the last inserted story card ID
+    $cardId = $conn->lastInsertId();
 
     // storyFolder 테이블의 display_image를 업데이트
     if(!empty($displayImage)){
@@ -179,14 +177,18 @@ try{
     //쿼리 준비는 반복문 바깥에서 한 번만 수행
     $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
     $stmtComment = $conn->prepare($sqlComment);
+    
+        if (!empty($comments) && is_array($data->comments) && isset($data->comments[0])){
+            // Prepare the INSERT query for comments
+            $sqlComment = "INSERT INTO comment (card_id, user_id, comment_text) VALUES (:cardId, :userId, :commentText)";
+            $stmtComment = $conn->prepare($sqlComment);
 
-        if (!empty($comments) && is_array($data->comments)){
-        foreach($data -> comments as $index => $commentText){
-            // $commentItem 대신 $commentText를 사용합니다. $commentText는 직접 문자열입니다.
-            $cardId = $cardIds[$index];
-            //댓글과 스토리 카드의 순서 일치: $data->comments 배열에 있는 댓글의 순서와 $cardIds 배열에 저장된 스토리 카드 ID의 순서가 일치
-            $stmtComment ->execute([':cardId' => $cardId, ':userId' => $userId, ':commentText' => $commentText]);
-        }    
+            // Execute the comment INSERT query for the single comment
+            $stmtComment->execute([
+                ':cardId' => $cardId, 
+                ':userId' => $userId, 
+                ':commentText' => $data->comments[0]  // Assuming $data->comments[0] is the single comment
+            ]);
     }
     // 모든 쿼리가 성공적으로 실행되면, 트랜잭션 커밋
     $conn->commit();
@@ -213,7 +215,7 @@ try{
     $resultFCM = sendFcmNotification($token, $messageData);
 
     if($resultFCM){
-        echo json_encode(["success" => true, "message" => "게시 성공!"]);
+        echo json_encode(["success" => true, "message" => $cardId]);
     }else{
         echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: sendFcmNotification() 실행시 문제가 생김"]);
     }
