@@ -215,7 +215,7 @@ try{
     $resultFCM = sendFcmNotification($token, $messageData);
 
     if($resultFCM){
-        echo json_encode(["success" => true, "message" => $cardId]);
+        echo json_encode(["success" => true, "message" => $folderId]);
     }else{
         echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: sendFcmNotification() 실행시 문제가 생김"]);
     }
