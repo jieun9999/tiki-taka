@@ -4,3 +4,5 @@ server_key.txt
 s3_access_key.txt
 s3_secret_key.txt
 aws
+vendor
+composer.phar
