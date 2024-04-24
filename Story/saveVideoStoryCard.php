@@ -36,12 +36,13 @@ if (isset($_FILES['uri'])) {
         $tmpFilePath = $_FILES['uri']['tmp_name'];
         $originalFileName = $_FILES['uri']['name'];
         $contentType = $_FILES['uri']['type'];
+        $totalSize = $_FILES['uri']['size']; 
 
         // S3에 업로드할 객체 키 생성
         $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
 
         // 파일 업로드 시도
-        $result = $s3Uploader->upload($key, $tmpFilePath, $contentType);
+        $result = $s3Uploader->uploadMulti($key, $tmpFilePath, $contentType, $totalSize);
 
         // 업로드 결과에 따라 처리
         if ($result['success']) {
@@ -56,16 +57,16 @@ if (isset($_FILES['uri'])) {
 // (2)displayImage 처리
 $displayImage = $_FILES['displayImage']; // 단일 파일 처리
 $contentType = $displayImage['type']; // 파일 타입
-// $displayImageContent = print_r($_FILES['displayImage'], true);
-// error_log("Received ['displayImage']: " . $displayImageContent);
 
 // 파일 타입이 이미지인 경우에만 파일 업로드를 시도
 // 문자열인 경우에는 이미 서버에 업로드 된, 웹 경로이기 때문에 다시 서버에 올릴 필요가 없음
 if (strpos($contentType, "image/") === 0) {
     $key = 'uploads/' . date('Y/m/d/') . $displayImage['name']; // S3에 저장될 객체의 키 (파일 이름)
     $filePath = $displayImage['tmp_name']; // 임시 파일 경로
+    // $displayImageContent = print_r($_FILES['displayImage'], true);
+    // error_log("Received ['displayImage']: " . $displayImageContent);
 
-    $result = $s3Uploader -> upload($key, $filePath, $contentType);
+    $result = $s3Uploader -> uploadSingle($key, $filePath, $contentType);
     if ($result['success']) {
         $displayImage = $result['url']; // s3에서 받은 url 할당
     } else {
@@ -83,7 +84,6 @@ else{
 
 //(3) 썸네일 얻기
 // ffmpeg로 동영상 Url에서 썸네일 jpg를 추출한다
-
     $originalThumbnailName = pathinfo($videoUrl, PATHINFO_FILENAME) . "_thumbnail.jpg"; // 원본 파일명에서 확장자를 제외하고 '_thumbnail.jpg' 추가
     $thumbnailPath = '/tmp/thumbnail.jpg'; // 썸네일을 임시로 저장할 경로
 
@@ -98,7 +98,7 @@ else{
         $contentType = 'image/jpeg';
 
         // S3에 썸네일 업로드
-        $uploadResult = $s3Uploader->upload($thumbnailKey, $thumbnailPath, $contentType);
+        $uploadResult = $s3Uploader->uploadSingle($thumbnailKey, $thumbnailPath, $contentType);
         if ($uploadResult['success']) {
             // 썸네일 업로드 성공, S3 URL 반환
             $thumbnailUrl = $uploadResult['url'];

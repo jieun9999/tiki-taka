@@ -41,7 +41,7 @@ if (strpos($contentType, "image/") === 0) {
     $key = 'uploads/' . date('Y/m/d/') . $displayImage['name']; // S3에 저장될 객체의 키 (파일 이름)
     $filePath = $displayImage['tmp_name']; // 임시 파일 경로
 
-    $result = $s3Uploader -> upload($key, $filePath, $contentType);
+    $result = $s3Uploader -> uploadSingle($key, $filePath, $contentType);
     if ($result['success']) {
         $displayImage = $result['url']; // s3에서 받은 url 할당
     } else {
@@ -73,7 +73,7 @@ if (isset($_FILES['uris'])) {
         $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
 
         // 파일 업로드 시도
-        $result = $s3Uploader->upload($key, $tmpFilePath, $contentType);
+        $result = $s3Uploader->uploadSingle($key, $tmpFilePath, $contentType);
 
         // 업로드 결과에 따라 처리
         if ($result['success']) {
