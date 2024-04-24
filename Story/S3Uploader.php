@@ -7,8 +7,9 @@ use Aws\S3\Exception\S3Exception;
 class S3Uploader{
     private $s3Client;
     private $bucket;
+    private $conn;
 
-    public function __construct($accessKey, $secretKey, $region, $bucket){
+    public function __construct($accessKey, $secretKey, $region, $bucket, $conn){
         $this->s3Client = new S3Client([
             'version' => 'latest',
             'region'  => $region,
@@ -19,6 +20,7 @@ class S3Uploader{
             'use_accelerate_endpoint' => true
         ]);
         $this->bucket = $bucket;
+        $this->conn = $conn; // 데이터베이스 연결 객체 저장
     }
     public function uploadSingle($key, $filePath, $contentType){
         try {
@@ -57,10 +59,17 @@ class S3Uploader{
                 'Body'   => $body, // 직접 데이터를 Body에 넣어 업로드
                 'ContentType' => $contentType, // 데이터 타입 지정
                 '@http' => [
-                    'progress' => function ($downloadTotalSize, $downloadSizeSoFar, $uploadTotalSize, $uploadSizeSoFar) {
+                    'progress' => function ($downloadTotalSize, $downloadSizeSoFar, $uploadTotalSize, $uploadSizeSoFar) use ($key) {
+                        static $lastReportedProgress = -10; // Initialize to -10 so it starts reporting at the first 10% increment
                         if ($uploadTotalSize > 0) {  // To avoid division by zero
-                            $percentComplete = ($uploadSizeSoFar / $uploadTotalSize) * 100;
-                            error_log(sprintf("%.2f%% of %d bytes uploaded.", $percentComplete, $uploadTotalSize));
+                            $percentComplete = floor($uploadSizeSoFar / $uploadTotalSize * 100);
+
+                            // Check if the new percentComplete is at least 10% greater than the last reported progress
+                            if ($percentComplete >= $lastReportedProgress + 10) {
+                                $this->updateUploadStatus($key, $percentComplete);
+                                error_log("percentComplete". $percentComplete);
+                                $lastReportedProgress = $percentComplete; // Update the last reported progress
+                            }
                         }
                     }
                 ]
@@ -72,6 +81,20 @@ class S3Uploader{
             error_log($e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
 
+        }
+    }
+
+    public function updateUploadStatus($key, $progress){
+        try {
+        // 같은 키가 이미 존재할 경우 진행 상태(progress)를 업데이트
+        $sql = "INSERT INTO uploadProgress (`key`, progress) VALUES (:key, :progress) ON DUPLICATE KEY UPDATE progress = VALUES(progress)";
+        // $conn 대신 $this->conn 사용
+        // 이렇게 하면, 객체의 속성에 저장된 데이터베이스 연결을 메서드 내에서 사용할 수 있습니다.
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':key' => $key, ':progress' => $progress]);
+
+        }catch (PDOException $e) {
+            error_log("Failed to update upload status: " . $e->getMessage());
         }
     }
 }
