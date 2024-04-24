@@ -36,13 +36,12 @@ if (isset($_FILES['uri'])) {
         $tmpFilePath = $_FILES['uri']['tmp_name'];
         $originalFileName = $_FILES['uri']['name'];
         $contentType = $_FILES['uri']['type'];
-        $totalSize = $_FILES['uri']['size']; 
 
         // S3에 업로드할 객체 키 생성
         $key = 'uploads/' . date('Y/m/d/') . $originalFileName;
 
         // 파일 업로드 시도
-        $result = $s3Uploader->uploadMulti($key, $tmpFilePath, $contentType, $totalSize);
+        $result = $s3Uploader->uploadSingleWtihTrack($key, $tmpFilePath, $contentType);
 
         // 업로드 결과에 따라 처리
         if ($result['success']) {
@@ -51,7 +50,7 @@ if (isset($_FILES['uri'])) {
         } else {
             // 업로드 실패 시 처리
             error_log("Upload failed: uri" . $result['message'] . "\n");
-             }
+            }
     }
 
 // (2)displayImage 처리
@@ -215,7 +214,8 @@ try{
     $resultFCM = sendFcmNotification($token, $messageData);
 
     if($resultFCM){
-        echo json_encode(["success" => true, "message" => $folderId]);
+        error_log("folderId".$folderId);
+        echo json_encode(["success" => true, "message" => "$folderId"]);
     }else{
         echo json_encode(["success" => false, "message" => "게시 실패 ㅠ: sendFcmNotification() 실행시 문제가 생김"]);
     }
