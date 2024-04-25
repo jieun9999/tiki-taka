@@ -7,9 +7,9 @@ use Aws\S3\Exception\S3Exception;
 class S3Uploader{
     private $s3Client;
     private $bucket;
-    private $conn;
+    private $database;
 
-    public function __construct($accessKey, $secretKey, $region, $bucket, $conn){
+    public function __construct($accessKey, $secretKey, $region, $bucket, $database){
         $this->s3Client = new S3Client([
             'version' => 'latest',
             'region'  => $region,
@@ -20,7 +20,7 @@ class S3Uploader{
             'use_accelerate_endpoint' => true
         ]);
         $this->bucket = $bucket;
-        $this->conn = $conn; // 데이터베이스 연결 객체 저장
+        $this->database = $database; // 데이터베이스 연결 객체 저장
     }
     public function uploadSingle($key, $filePath, $contentType){
         try {
@@ -85,7 +85,22 @@ class S3Uploader{
     }
 
     public function updateUploadStatus($key, $progress){
-      // realtime db를 짧은 시간내에 여러번 업데이트 한다
+
+       // Firebase 키에 허용되지 않는 문자를 언더스코어로 대체
+            $safe_key = strtr($key, [
+                '.' => '_',
+                '$' => '_',
+                '#' => '_',
+                '[' => '_',
+                ']' => '_'
+            ]);
+
+      //지정된 경로에 있는 데이터를 업데이트하거나, 해당 경로가 존재하지 않으면 새로운 데이터를 추가
+        $this -> database
+                ->getReference($safe_key)
+                ->update([
+                    'progress' => $progress
+                ]);
     }
 }
 ?>

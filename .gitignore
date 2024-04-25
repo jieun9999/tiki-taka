@@ -6,3 +6,5 @@ s3_secret_key.txt
 aws
 vendor
 composer.phar
+firebase service key.json
+realtimeDatabaseUrl.txt

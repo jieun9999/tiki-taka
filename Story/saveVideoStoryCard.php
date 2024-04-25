@@ -3,6 +3,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require '../db_connect.php';
+require '../setupRealtimeDatabase.php';
 
 // 1. s3에 동영상 파일 업로드 하기
 require 'S3Uploader.php';
@@ -19,7 +20,7 @@ $s3SecretKey = file_get_contents($s3SecretKeyFile);
 
 // S3 업로더 인스턴스 생성
 // db연결 객체를 전달
-$s3Uploader = new S3Uploader($s3AccessKey, $s3SecretKey, $s3Region, $s3Bucket, $conn);
+$s3Uploader = new S3Uploader($s3AccessKey, $s3SecretKey, $s3Region, $s3Bucket, $database);
 
 // 2.멀티파트 폼 데이터로 전송된 데이터를 받습니다
 //텍스트 데이터
