@@ -85,17 +85,7 @@ class S3Uploader{
     }
 
     public function updateUploadStatus($key, $progress){
-        try {
-        // 같은 키가 이미 존재할 경우 진행 상태(progress)를 업데이트
-        $sql = "INSERT INTO uploadProgress (`key`, progress) VALUES (:key, :progress) ON DUPLICATE KEY UPDATE progress = VALUES(progress)";
-        // $conn 대신 $this->conn 사용
-        // 이렇게 하면, 객체의 속성에 저장된 데이터베이스 연결을 메서드 내에서 사용할 수 있습니다.
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':key' => $key, ':progress' => $progress]);
-
-        }catch (PDOException $e) {
-            error_log("Failed to update upload status: " . $e->getMessage());
-        }
+      // realtime db를 짧은 시간내에 여러번 업데이트 한다
     }
 }
 ?>
