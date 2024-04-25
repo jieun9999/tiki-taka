@@ -85,6 +85,7 @@ class S3Uploader{
     }
 
     public function updateUploadStatus($key, $progress){
+        $timestamp = time();  // 현재 시간을 Unix 타임스탬프로 가져옵니다.
 
        // Firebase 키에 허용되지 않는 문자를 언더스코어로 대체
             $safe_key = strtr($key, [
@@ -99,7 +100,8 @@ class S3Uploader{
         $this -> database
                 ->getReference($safe_key)
                 ->update([
-                    'progress' => $progress
+                    'progress' => $progress,
+                    'updated_at' => $timestamp
                 ]);
     }
 }
