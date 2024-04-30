@@ -16,8 +16,8 @@ class S3Uploader{
             'credentials' => [
                 'key' => $accessKey,
                 'secret' => $secretKey,
-            ],
-            'use_accelerate_endpoint' => true
+            ]
+            // ,'use_accelerate_endpoint' => true
         ]);
         $this->bucket = $bucket;
         $this->database = $database; // 데이터베이스 연결 객체 저장
