@@ -17,7 +17,7 @@ $s3AccessKey = file_get_contents($s3AccessKeyFile);
 $s3SecretKey = file_get_contents($s3SecretKeyFile); 
 
 // S3 업로더 인스턴스 생성
-$s3Uploader = new S3Uploader($s3AccessKey, $s3SecretKey, $s3Region, $s3Bucket);
+$s3Uploader = new S3Uploader($s3AccessKey, $s3SecretKey, $s3Region, $s3Bucket, $conn);
 
 // 2.멀티파트 폼 데이터로 전송된 데이터를 받습니다
 //텍스트 데이터
