@@ -6,7 +6,7 @@ function sendFcmNotification($device_token, $messageData){
     // 서버 키를 저장한 파일 경로
     $serverKeyFile = '/var/www/html/FCM/server_key.txt';
     // URL 및 서버 키 설정
-    $url = 'https://fcm.googleapis.com/fcm/send';
+    $url = 'https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send';
     $server_key = file_get_contents($serverKeyFile);
 
     // 데이터 및 헤더 준비
