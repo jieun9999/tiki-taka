@@ -8,3 +8,4 @@ vendor
 composer.phar
 firebase service key.json
 realtimeDatabaseUrl.txt
+smtp_app_pw.txt
