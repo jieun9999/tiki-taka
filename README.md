@@ -21,3 +21,11 @@ https://github.com/user-attachments/assets/682259d6-c023-467b-91a2-34477b2838e8
 - 상대방과 연결된 경우에만 로그인 허용
 - 프로필(이름, 사진, 배경사진, 상태메세지) 변경
   
+
+
+
+
+
+---
+동영상 압축 사이트
+https://www.veed.io/tools/video-compressor?locale=ko-KR&source=/tools/video-compressor/gif-compressor
