@@ -28,10 +28,10 @@ https://github.com/user-attachments/assets/682259d6-c023-467b-91a2-34477b2838e8
 
 ---
 동영상 촬영
-맥북 내장 화면 녹화
+- 맥북 내장 화면 녹화
 
 동영상 편집(mov -> mp4로 변환)
-imovie의 내보내기 
+- imovie의 내보내기 
 
 동영상 압축
-https://www.veed.io/tools/video-compressor?locale=ko-KR&source=/tools/video-compressor/gif-compressor
+- https://www.veed.io/tools/video-compressor?locale=ko-KR&source=/tools/video-compressor/gif-compressor
