@@ -8,7 +8,10 @@
 ## 기능구현
 
 ### 1. 회원가입
-![회원가입_3단계](https://github.com/user-attachments/assets/4e9aab91-53c5-4045-bb6b-f440fc69e8a2)
+![회원가입_3단계](https://github.com/user-attachments/assets/42c3cb6b-7fae-4607-898e-682315344ae9)
+
+https://github.com/user-attachments/assets/682259d6-c023-467b-91a2-34477b2838e8
+
 
 - 1단계_이메일 인증
 - 2단계_초대번호 발급 및 상대방 연결
