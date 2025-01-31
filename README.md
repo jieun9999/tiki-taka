@@ -17,6 +17,7 @@ https://github.com/user-attachments/assets/682259d6-c023-467b-91a2-34477b2838e8
 
 
 ### 2. 로그인 및 프로필 변경
+https://github.com/user-attachments/assets/f71943d3-d30c-4cc5-9bba-fd1e96653f8e
 
 - 상대방과 연결된 경우에만 로그인 허용
 - 프로필(이름, 사진, 배경사진, 상태메세지) 변경
