@@ -48,8 +48,13 @@ https://github.com/user-attachments/assets/6baeda43-03c5-4c79-b3f1-197a77dda94a
 - 메모
 
 
-### 6. 기존 스토리 폴더 수정하기
+### 6. 기존 스토리 폴더 수정 및 삭제
 
+
+- 스토리 폴더 수정
+- 스토리 카드 수정
+- 스토리 카드 삭제
+  
   
 
 
