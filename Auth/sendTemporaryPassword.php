@@ -54,13 +54,14 @@ try {
     $mail->isSMTP();                                      // SMTP를 사용
     $mail->Host = 'smtp.gmail.com';                       // 메일 서버 지정
     $mail->SMTPAuth = true;                               // SMTP 인증 사용
-    $mail->Username = 'teamjidong@gmail.com';             // Gmail 주소
-    $mail->Password = 'gzto jmsd bzqp pmrv';              // Gmail 앱비밀번호
+    $mail->Username = 'teseuteuyong51@gmail.com';             // 
+    $mail->Password = trim(file_get_contents('/var/www/html/smtp_app_pw.txt'));// Gmail 앱비밀번호
+    // 파일명만 쓰지 말고, 해당 경로에서 값을 읽어오는 방식으로 작성
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // TLS 암호화 사용
     $mail->Port = 587;                                    // TCP 포트 연결
 
     // 수신자 설정
-    $mail->setFrom('teamjidong@gmail.com', 'Mailer');     // 보내는 사람
+    $mail->setFrom('teseuteuyong51@gmail.com', 'Mailer');     // 보내는 사람
     $mail->addAddress($email);     // 받는 사람
 
     // 컨텐츠 설정
@@ -68,16 +69,19 @@ try {
     $mail->CharSet = 'UTF-8';                //한글 인코딩
     $mail->Subject = '이메일 인증 코드 발송';    // 이메일 제목
     $mail->Body = "<h1>이메일 인증 코드</h1>
-               <p>귀하의 임시비밀번호: <strong>$temporaryPassword</strong></p>
+               <p>귀하의 인증 코드: <strong>$temporaryPassword</strong></p>
                <p><strong>주의: 이 인증번호는 10분 내에 만료됩니다.</strong></p>";
                //html 메세지 본문
+
 
     // 이메일 전송
     $mail->send();
     $emailSent = true;
 
 }catch (Exception $e) {
-    $emailSent = false;
+        // 오류 메시지를 로그 파일에 기록
+        error_log('메일 전송 실패: ' . $mail->ErrorInfo); 
+        $emailSent = false;
     }
 
 

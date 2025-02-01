@@ -22,9 +22,11 @@ class S3Uploader{
         $this->bucket = $bucket;
         $this->database = $database; // 데이터베이스 연결 객체 저장
     }
+
+    // 파일을 읽어서 Body에 넣어 업로드
     public function uploadSingle($key, $filePath, $contentType){
         try {
-            // 파일을 읽어서 Body에 넣어 업로드
+        
             $body = file_get_contents($filePath);
 
             // S3 버킷에 데이터 업로드
@@ -32,7 +34,7 @@ class S3Uploader{
                 'Bucket' => $this -> bucket,
                 'Key'    => $key,
                 'Body'   => $body, // 직접 데이터를 Body에 넣어 업로드
-                'ContentType' => $contentType, // 데이터 타입 지정
+                'ContentType' => $contentType // 데이터 타입 지정
             ]);
 
             // 업로드 성공 시 파일의 URL 반환
@@ -104,5 +106,32 @@ class S3Uploader{
                     'updated_at' => $timestamp
                 ]);
     }
+
+    public function uploadSingleImage($key, $filePath, $contentType ) {
+        try {
+            // S3에 파일 업로드
+            $result = $this->s3Client->putObject([
+                'Bucket'      => $this->bucket,
+                'Key'         => $key, // S3에 저장될 파일 경로 및 이름
+                'SourceFile'  => $filePath, // 로컬 파일 경로
+                'ContentType' => $contentType
+            ]);
+    
+            // 업로드 성공 시 파일의 URL 반환
+            return [
+                'success' => true,
+                'url'     => $result['ObjectURL'],
+            ];
+        } catch (S3Exception $e) {
+            // 업로드 실패 시 오류 로그 기록 및 메시지 반환
+            error_log($e->getMessage());
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+    
 }
+
 ?>

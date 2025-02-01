@@ -36,7 +36,8 @@ try {
     $mail->Host = 'smtp.gmail.com';                       // 메일 서버 지정
     $mail->SMTPAuth = true;                               // SMTP 인증 사용
     $mail->Username = 'teseuteuyong51@gmail.com';             // 
-    $mail->Password = smtp_app_pw.txt;              // Gmail 앱비밀번호
+    $mail->Password = trim(file_get_contents('/var/www/html/smtp_app_pw.txt'));// Gmail 앱비밀번호
+    // 파일명만 쓰지 말고, 해당 경로에서 값을 읽어오는 방식으로 작성
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // TLS 암호화 사용
     $mail->Port = 587;                                    // TCP 포트 연결
 
